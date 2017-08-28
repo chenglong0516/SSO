@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.itcast.dao.mapper.UserMapper">
+	<!--  -->
+    <resultMap id="userBaseMap" type="cn.itcast.pojo.User">
+         <!-- id -->
+        <result property="id" column="id"/>
+         <!-- 用户名 -->
+        <result property="username" column="username"/>
+         <!-- 密码 -->
+        <result property="password" column="password"/>
+         <!-- 创建时间 -->
+        <result property="createTime" column="createtime"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="userColumns">
+	    <![CDATA[
+        id ,username ,password ,createtime
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterType="cn.itcast.pojo.User">
+    <![CDATA[
+        INSERT INTO user (
+        	id ,
+        	username ,
+        	password ,
+        	createtime
+        ) VALUES (
+        	#{id} ,
+        	#{username} ,
+        	#{password} ,
+        	now()
+        )
+    ]]>
+    </insert>
+	
+	<!-- 通过ID、编码、名称查询，进行存在性校验 -->
+	<select id="findByUserName" parameterType="java.util.Map" resultMap="userBaseMap">
+		select 
+			<include refid="userColumns"/>  
+		from user 
+		<where> 
+			username = #{username}
+		</where>
+	</select>
+	
+</mapper>

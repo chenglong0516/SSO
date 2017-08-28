@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.itcast.dao.mapper.TokenMapper">
+	<!--  -->
+    <resultMap id="tokenBaseMap" type="cn.itcast.pojo.Token">
+         <!-- id -->
+        <result property="id" column="id"/>
+         <!-- token -->
+        <result property="token" column="token"/>
+         <!-- 状态0有效 1无效 -->
+        <result property="state" column="state"/>
+         <!-- 已登录系统Url集合 -->
+        <result property="loginUrl" column="login_url"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="tokenColumns">
+	    <![CDATA[
+        id ,token ,state ,login_url
+	    ]]>
+	</sql>
+	
+    <insert id="insert" parameterType="cn.itcast.pojo.Token">
+    <![CDATA[
+        INSERT INTO token (
+        	id ,
+        	token ,
+        	state ,
+        	login_url
+        ) VALUES (
+        	#{id} ,
+        	#{token} ,
+        	#{state} ,
+        	#{loginUrl}
+        )
+    ]]>
+    </insert>
+	
+	<!-- 通过ID、编码、名称查询，进行存在性校验 -->
+	<select id="find" parameterType="java.util.Map" resultMap="tokenBaseMap">
+		select 
+			<include refid="tokenColumns"/>  
+		from token 
+		<where> 
+		    <if test="id!=null and id!=''">	
+        		and id = #{id}
+        	</if>
+		    <if test="token!=null and token!=''">	
+        		and token = #{token}
+        	</if>
+		</where>
+	</select>
+	
+	<!--更新记录  -->
+    <update id="update" parameterType="cn.itcast.pojo.Token">
+        UPDATE token 
+        <set>
+        	<if test="state!=null and state!=''">	
+        		state = #{state} ,
+        	</if>
+        	<if test="loginUrl!=null and loginUrl!=''">	
+        		login_url = #{loginUrl} ,
+        	</if>
+	    </set>
+        WHERE 
+	        token = #{token} 
+    </update>
+    
+	<!--删除记录  -->
+    <update id="delete" parameterType="java.lang.String">
+        delete from token 
+        WHERE 
+	        token = #{tokenValue} 
+    </update>
+	
+</mapper>

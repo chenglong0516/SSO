@@ -1,0 +1,22 @@
+#dirver=com.mysql.jdbc.Driver
+#url=jdbc:mysql://127.0.0.1:3306/seckill?useUnicode=true&characterEncoding=utf8
+#username=root
+#password=admin
+
+db.druid.url =jdbc:mysql://192.168.6.101:3306/seckill?useUnicode=true&autoReconnect=true&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull
+jdbc.driverClassName=com.mysql.jdbc.Driver
+db.druid.username =root
+db.druid.password =htbuy@2016
+db.druid.initialSize =10
+db.druid.minIdle =20
+db.druid.maxActive =20
+db.druid.maxWait =60000
+db.druid.timeBetweenEvictionRunsMillis =60000
+db.druid.minEvictableIdleTimeMillis =300000
+db.druid.validationQuery =SELECT 1
+db.druid.testWhileIdle =true
+db.druid.testOnBorrow =false
+db.druid.testOnReturn =false
+db.druid.poolPreparedStatements =true
+db.druid.maxPoolPreparedStatementPerConnectionSize=20
+db.druid.filters =stat
