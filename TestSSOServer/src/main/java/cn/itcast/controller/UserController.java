@@ -69,50 +69,17 @@ public class UserController {
 	}
 	
 	@RequestMapping("/ssoLogout.action")
-	public String logout(HttpSession session, HttpServletRequest req, HttpServletResponse res){
-		System.out.println("客户端注销,发送过来的请求");
+	public String logout(HttpSession session, HttpServletRequest req){
+		Token token = null;
 	    if (session != null) {
 	    	System.out.println(session.getId()+" 全局session invalidate....");
-	        session.invalidate();//触发LogoutListener
-	        //监听器中工作
-	        try {
-	        	String tokenValue = req.getParameter("token");
-				Map<String,Object> conditionMap = new HashMap<String, Object>();
-				conditionMap.put("token", tokenValue);
-				Token findToken = tokenService.find(conditionMap);//从数据库中拿到token
-				if(null!=findToken.getLoginUrl() && !"".equals(findToken.getLoginUrl())){
-					String[] list = findToken.getLoginUrl().split(";");
-					for (String loginUrl : list) {
-						try {
-							String[] list1 = loginUrl.split("===");
-							String url = list1[0];
-							String JSESSIONID = list1[1];
-//				            Cookie cookie = new Cookie("JSESSIONID",JSESSIONID);
-//				            cookie.setDomain(url);
-//				            cookie.setPath("/");
-//				            String cookies= req.getHeader("Cookie");
-				            String cookies= "JSESSIONID="+JSESSIONID;
-				            Header[] headers=null;
-				            if(cookies!=null){
-				                headers = HttpHeader.custom().cookie(cookies).build();
-				            }
-				    		HCB hcb = HCB.custom().timeout(30000);
-				    		HttpConfig httpConfig =HttpConfig.custom()
-				    				.url(url+"/user/backLogout.action")
-				    				.headers(headers, true)
-				    				.hcb(hcb)
-				    				.encoding("utf-8")
-				    				.method(HttpMethods.POST);
-				    		String response = HttpClientUtil.post(httpConfig);
-				    		if(!"success".equals(response)){
-				    			System.out.println(url+"退出失败");
-				    		}
-				    	} catch (Exception e) {
-//				    		return false;
-				    	}
-					}
-				}
-				tokenService.delete(req.getParameter("token"));
+	    	Map<String, Object> map = new HashMap<String, Object>();
+	    	map.put("token", req.getParameter("token"));
+	    	try {
+				token = tokenService.find(map);
+				session.setAttribute("token", token);//token放入session传给监听器
+				session.invalidate();//触发LogoutListener
+				tokenService.delete(req.getParameter("token"));//删除数据库
 			} catch (ValidationException e) {
 				e.printStackTrace();
 			}
